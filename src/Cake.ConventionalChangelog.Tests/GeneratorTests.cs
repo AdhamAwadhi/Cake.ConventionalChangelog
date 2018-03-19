@@ -4,40 +4,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using Cake.ConventionalChangelog;
 using LibGit2Sharp;
 using System.IO;
 using System.Text.RegularExpressions;
-using Cake.Testing;
-using Cake.Core;
-using Cake.Core.IO;
 
-namespace Tests
+namespace Cake.ConventionalChangelog.Tests
 {
     [TestFixture]
     public class GeneratorTests
     {
-        IFileSystem fileSystem;
+        FileSystem fileSystem;
         Repository repo;
         string readmePath;
-        ICakeEnvironment environment;
 
         private string TestRepoChangelogPath
         {
             get
             {
-                return ((FilePath)$"./{Util.TEST_REPO_DIR}/CHANGELOG.md").MakeAbsolute(environment).FullPath;
+                return fileSystem.Path.Combine(Util.TEST_REPO_DIR, "CHANGELOG.md");
             }
         }
 
         [SetUp]
         public void Setup()
         {
-            environment = FakeEnvironment.CreateWindowsEnvironment();
-            fileSystem = new FakeFileSystem(environment);
+            fileSystem = new FileSystem();
             repo = Util.InitTestRepo();
-            readmePath = ((FilePath)$"./{Util.TEST_REPO_DIR}/README.md").MakeAbsolute(environment).FullPath;
+            readmePath = Path.Combine(Util.TEST_REPO_DIR, "README.md");
         }
 
         [TearDown]
@@ -71,7 +67,7 @@ namespace Tests
             repo.Index.Add("README.md");
             repo.Commit("feat(Foo): Extended Foo");
 
-            var changelog = new Changelog(fileSystem, environment);
+            var changelog = new Changelog(fileSystem);
 
             changelog.Generate(new ChangelogOptions()
             {
@@ -79,7 +75,7 @@ namespace Tests
                 WorkingDirectory = Util.TEST_REPO_DIR
             });
 
-            var text = File.ReadAllText(TestRepoChangelogPath);
+            var text = fileSystem.File.ReadAllText(TestRepoChangelogPath);
 
             var lines = text.Split('\n');
 
@@ -127,17 +123,17 @@ namespace Tests
         [Test]
         public void PassingOnlyVersionStringWorks()
         {
-            var changelog = new Changelog(fileSystem, environment);
+            var changelog = new Changelog(fileSystem);
 
             changelog.Generate("1.0.1");
 
-            var text = File.ReadAllText(TestRepoChangelogPath);
+            var text = fileSystem.File.ReadAllText("CHANGELOG.md");
 
             Assert.False(String.IsNullOrEmpty(text));
             Assert.True(text.Contains("1.0.1"));
 
             // Cleanup changelog from local dir
-            fileSystem.GetFile("CHANGELOG.md").Delete();
+            fileSystem.File.Delete("CHANGELOG.md");
         }
 
         [Test]
@@ -145,7 +141,7 @@ namespace Tests
         {
             var ex = Assert.Throws<Exception>(() =>
             {
-                var changelog = new Changelog(fileSystem, environment);
+                var changelog = new Changelog(fileSystem);
                 changelog.Generate("");
             });
 
@@ -157,7 +153,7 @@ namespace Tests
         {
             Assert.DoesNotThrow(() =>
             {
-                var c = new Changelog(fileSystem, environment);
+                var c = new Changelog();
             });
         }
 
@@ -166,7 +162,7 @@ namespace Tests
         {
             Util.InitEmptyRepo();
 
-            var changelog = new Changelog(fileSystem, environment);
+            var changelog = new Changelog(fileSystem);
 
             GitException ex = Assert.Throws<GitException>(() =>
             {
@@ -193,14 +189,14 @@ namespace Tests
             repo.Index.Add("README.md");
             repo.Commit("chore(Foo): Foo chore");
 
-            var changelog = new Changelog(fileSystem, environment);
+            var changelog = new Changelog(fileSystem);
             changelog.Generate(new ChangelogOptions()
             {
                 Version = "1.0.1",
                 WorkingDirectory = Util.TEST_REPO_DIR
             });
 
-            var text = File.ReadAllText(TestRepoChangelogPath);
+            var text = fileSystem.File.ReadAllText(TestRepoChangelogPath);
 
             Assert.True(text.Contains("Foo feature"));
             Assert.False(text.Contains("Foo chore"));
@@ -215,9 +211,9 @@ namespace Tests
             repo.Index.Add("README.md");
             repo.Commit("feat(Foo): Foo feature");
 
-            var changelog = new Changelog(fileSystem, environment);
+            var changelog = new Changelog(fileSystem);
 
-            File.WriteAllText(TestRepoChangelogPath, "This is previous stuff");            
+            fileSystem.File.WriteAllText(TestRepoChangelogPath, "This is previous stuff");
 
             changelog.Generate(new ChangelogOptions()
             {
@@ -225,7 +221,7 @@ namespace Tests
                 WorkingDirectory = Util.TEST_REPO_DIR
             });
 
-            var text = File.ReadAllText(TestRepoChangelogPath);
+            var text = fileSystem.File.ReadAllText(TestRepoChangelogPath);
 
             Assert.True(Regex.Match(text, @"1.0.1[\s\S]+?This is previous stuff", RegexOptions.IgnoreCase | RegexOptions.Multiline).Success);
         }

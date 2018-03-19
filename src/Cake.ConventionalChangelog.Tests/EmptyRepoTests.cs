@@ -5,29 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Cake.ConventionalChangelog;
 using NUnit.Framework;
-using Cake.Core.IO;
-using Cake.Testing;
-using Cake.Core;
 
-namespace Tests
+namespace Cake.ConventionalChangelog.Tests
 {
     [TestFixture]
     public class EmptyRepoTests
     {
-        IFileSystem fileSystem;
-        ICakeEnvironment environment;
-
         private Git git;
 
         [SetUp]
         public void Setup()
         {
-            environment = FakeEnvironment.CreateWindowsEnvironment();
-            fileSystem = new FakeFileSystem(environment);
-
             Util.InitEmptyRepo();
-            var dir = ((DirectoryPath)Util.EMPTY_REPO_DIR).MakeAbsolute(environment).FullPath;
-            git = new Git(dir);
+
+            git = new Git(Util.EMPTY_REPO_DIR);
         }
 
         [TearDown]

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Cake.ConventionalChangelog;
 using NUnit.Framework;
 
-namespace Tests
+namespace Cake.ConventionalChangelog.Tests
 {
     [TestFixture]
     public class ExceptionTests

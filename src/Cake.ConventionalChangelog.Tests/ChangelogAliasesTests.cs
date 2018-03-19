@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tests
+namespace Cake.ConventionalChangelog.Tests
 {
     [TestFixture]
     public class ChangelogAliasesTests

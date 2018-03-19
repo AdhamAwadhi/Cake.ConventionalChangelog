@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace Cake.ConventionalChangelog
 {
     /// <summary>
-    /// Changelog options used by <see cref="Changelog"/>.
+    /// Changelog settings used by <see cref="Changelog"/>.
     /// </summary>
-    public class ChangelogOptions
+    public class ChangeLogSettings
     {
         /// <summary>
         ///     Gets or sets the version.
@@ -54,7 +54,7 @@ namespace Cake.ConventionalChangelog
         /// <summary>
         ///     Initializes a new instance of the <see cref="ChangelogOptions"/> class.
         /// </summary>
-        public ChangelogOptions()
+        public ChangeLogSettings()
         {
             To = "HEAD";
             File = "CHANGELOG.md";

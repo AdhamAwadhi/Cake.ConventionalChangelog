@@ -33,7 +33,7 @@ namespace Cake.ConventionalChangelog
         [CakeMethodAlias]
         public static void GitChangelog(this ICakeContext context, string version)
         {
-            GitChangelog(context, new ChangelogOptions() { Version = version });
+            GitChangelog(context, new ChangeLogSettings() { Version = version });
         }
 
         /// <summary>
@@ -58,15 +58,32 @@ namespace Cake.ConventionalChangelog
         /// </code>
         /// </example>
         /// <param name="context">The context.</param>
-        /// <param name="options">changelog options.</param>
+        /// <param name="settings">changelog settings.</param>
         [CakeMethodAlias]
-        public static void GitChangelog(this ICakeContext context, ChangelogOptions options)
+        public static void GitChangelog(this ICakeContext context, ChangeLogSettings settings)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            var gen = new Changelog(context.FileSystem, context.Environment);
+            if (settings.WorkingDirectory.IsRelative)
+                settings.WorkingDirectory = settings.WorkingDirectory.MakeAbsolute(context.Environment);
+            if (settings.File.IsRelative)
+                settings.File = settings.File.MakeAbsolute(settings.WorkingDirectory);
+
+
+            var options = new ChangelogOptions
+            {
+                Version = settings.Version,
+                From = settings.From,
+                To = settings.To,
+                Grep = settings.Grep,
+                Subtitle = settings.Subtitle,
+                WorkingDirectory = settings.WorkingDirectory.FullPath,
+                File = settings.File.FullPath
+            };
+
+            var gen = new Changelog();
             gen.Generate(options);
         }
     }

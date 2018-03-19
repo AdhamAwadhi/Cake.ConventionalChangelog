@@ -3,37 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO.Abstractions;
 using System.IO;
-using Cake.Core.IO;
-using Cake.Core;
-using Cake.Core.Annotations;
-using System.Text.RegularExpressions;
-using System.Collections.Concurrent;
 
 namespace Cake.ConventionalChangelog
 {
     public class Changelog
     {
-        private readonly IFileSystem _fileSystem;
-        private readonly ICakeEnvironment _environment;
+        readonly IFileSystem fileSystem;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Changelog"/> class.
-        /// </summary>
-        /// <param name="fileSystem">The file system.</param>
-        /// <param name="environment">The environment.</param>
-        public Changelog(IFileSystem fileSystem, ICakeEnvironment environment)
+        public Changelog() : this(new FileSystem()) { }
+        public Changelog(IFileSystem fileSystem)
         {
-            if (fileSystem == null)
-            {
-                throw new ArgumentNullException("fileSystem");
-            }
-            if (environment == null)
-            {
-                throw new ArgumentNullException("environment");
-            }
-            _fileSystem = fileSystem;
-            _environment = environment;
+            this.fileSystem = fileSystem;
         }
 
         public void Generate(string Version)
@@ -50,17 +32,7 @@ namespace Cake.ConventionalChangelog
                 throw new Exception("No version specified");
             }
 
-            if (options.WorkingDirectory.IsRelative)
-            {
-                options.WorkingDirectory = options.WorkingDirectory.MakeAbsolute(_environment);
-            }
-
-            if (options.File.IsRelative)
-            {
-                options.File = options.File.MakeAbsolute(options.WorkingDirectory);
-            }
-
-            var git = new Git(options.WorkingDirectory.FullPath);
+            var git = new Git(options.WorkingDirectory);
 
             // Get the latest tag or commit
             string tag;
@@ -81,7 +53,7 @@ namespace Cake.ConventionalChangelog
             string from = (!String.IsNullOrEmpty(tag)) ? tag : options.From;
 
 
-            var git = new Git(options.WorkingDirectory.FullPath);
+            var git = new Git(options.WorkingDirectory);
             var commits = git.GetCommits(grep: options.Grep, from: from, to: options.To ?? "HEAD");
 
             WriteLog(commits, options);
@@ -92,24 +64,38 @@ namespace Cake.ConventionalChangelog
             Writer writer = new Writer();
             string changelog = writer.WriteLog(commits, new WriterOptions()
             {
-                Version = options.Version,
-                Subtitle = options.Subtitle
+                Version = options.Version
             });
 
-            string filePath = options.File.FullPath;// fileSystem.Path.Combine(options.WorkingDirectory, options.File);
-            var file = _fileSystem.GetFile(options.File);
+            string filePath = fileSystem.Path.Combine(options.WorkingDirectory, options.File);
 
-            var fullPath = file.Path.FullPath;
             string currentlog = "";
-            if (File.Exists(fullPath))
+            if (fileSystem.File.Exists(filePath))
             {
-                currentlog = File.ReadAllText(fullPath, Encoding.UTF8);
+                currentlog = fileSystem.File.ReadAllText(filePath, Encoding.UTF8);
             }
 
-            File.WriteAllText(fullPath, changelog + "\n" + currentlog, Encoding.UTF8);
-            //using (var ws = new StreamWriter(file.OpenWrite(), Encoding.UTF8))
-            //    ws.WriteLine(string.Join("\n", new[] { changelog }.Concat(currentlog).ToArray()));
+            fileSystem.File.WriteAllText(filePath, changelog + "\n" + currentlog, Encoding.UTF8);
         }
     }
 
+    public class ChangelogOptions
+    {
+        public string Version { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string File { get; set; }
+        public string WorkingDirectory { get; set; }
+        public string Subtitle { get; set; }
+        public string Grep { get; set; }
+
+        public ChangelogOptions()
+        {
+            To = "HEAD";
+            File = "CHANGELOG.md";
+            Subtitle = "";
+            WorkingDirectory = ".";
+            Grep = @"^feat|^fix|BREAKING";
+        }
+    }
 }

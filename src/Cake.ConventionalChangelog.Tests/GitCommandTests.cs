@@ -7,30 +7,19 @@ using NUnit.Framework;
 using Cake.ConventionalChangelog;
 using LibGit2Sharp;
 using System.IO;
-using Cake.Core.IO;
-using Cake.Testing;
-using Cake.Core;
 
-namespace Tests
+namespace Cake.ConventionalChangelog.Tests
 {
     [TestFixture]
     public class GitCommandTests
     {
-        IFileSystem fileSystem;
-        ICakeEnvironment environment;
-
-        private Git git;
+        private Git git = new Git("test_repo");
         private Repository repo;
 
         [SetUp]
         public void Setup()
         {
-            environment = FakeEnvironment.CreateWindowsEnvironment();
-            fileSystem = new FakeFileSystem(environment);
             repo = Util.InitTestRepo();
-
-            var dir = ((DirectoryPath)Util.TEST_REPO_DIR).MakeAbsolute(environment).FullPath;
-            git = new Git(dir);
         }
 
         [TearDown]

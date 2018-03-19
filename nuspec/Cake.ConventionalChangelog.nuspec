@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>Cake.ConventionalChangelog</id>
+    <version>0.0.0</version>
+    <title>Cake.ConventionalChangelog</title>    
+    <authors>c0bra, AdhamAwadhi</authors>
+    <owners>c0bra, AdhamAwadhi</owners>
+    <description>Cake Addin to generate changelog file depends on git log.</description>
+    <licenseUrl>https://github.com/AdhamAwadhi/Cake.ConventionalChangelog/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/AdhamAwadhi/Cake.ConventionalChangelog</projectUrl>
+    <iconUrl></iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright (c) 2018 - Present</copyright>
+    <tags>Cake changelog git</tags>
+  </metadata>
+  <files>
+  </files>
+</package>

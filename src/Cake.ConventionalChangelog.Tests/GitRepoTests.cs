@@ -8,32 +8,22 @@ using Cake.ConventionalChangelog;
 using LibGit2Sharp;
 using System.IO;
 using System.Reflection;
-using Cake.Core.IO;
-using Cake.Core;
-using Cake.Testing;
 
-namespace Tests
+namespace Cake.ConventionalChangelog.Tests
 {
     [TestFixture]
     public class GitRepoTests
     {
-        IFileSystem fileSystem;
-        ICakeEnvironment environment;
-
-        private Git git;
+        private Git git = new Git("test_repo");
         private Repository repo;
         private string readmePath;
 
         [SetUp]
         public void Setup()
         {
-            environment = FakeEnvironment.CreateWindowsEnvironment();
-            fileSystem = new FakeFileSystem(environment);
             repo = Util.InitTestRepo();
-            readmePath = ((FilePath)$"./{Util.TEST_REPO_DIR}/README.md").MakeAbsolute(environment).FullPath;
 
-            var dir = ((DirectoryPath)Util.TEST_REPO_DIR).MakeAbsolute(environment).FullPath;
-            git = new Git(dir);
+            readmePath = Path.Combine(Util.TEST_REPO_DIR, "README.md");
         }
 
         [TearDown]
@@ -50,7 +40,7 @@ namespace Tests
                 var git = new Git();
             });
         }
-
+        
         [Test]
         public void GetFirstCommit_RepoWithCommitReturnsEmptyString()
         {
@@ -67,14 +57,14 @@ namespace Tests
         {
             InitialCommit();
 
-            readmePath = ((FilePath)$"./{Util.TEST_REPO_DIR}/README.md").MakeAbsolute(environment).FullPath;
+            string readmePath = Path.Combine(Util.TEST_REPO_DIR, "README.md");
 
             File.WriteAllText(readmePath, "Updating readme");
             repo.Index.Add("README.md");
             repo.Commit("feat(Stuff): Doing things over heah\n\nHey what up");
 
             List<CommitMessage> commits = git.GetCommits();
-
+            
             Assert.IsTrue(commits.Count == 1);
 
             var commit = commits.First();
