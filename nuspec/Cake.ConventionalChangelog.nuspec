@@ -15,5 +15,8 @@
     <tags>Cake changelog git</tags>
   </metadata>
   <files>
+    <file src="Cake.ConventionalChangelog.dll" target="lib\net45" />
+    <file src="Cake.ConventionalChangelog.pdb" target="lib\net45" />
+    <file src="Cake.ConventionalChangelog.xml" target="lib\net45" />
   </files>
 </package>
