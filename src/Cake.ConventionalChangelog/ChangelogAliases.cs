@@ -45,7 +45,7 @@ namespace Cake.ConventionalChangelog
         /// 
         /// Task("Generate-Changelog")
         ///  .Does(() => {
-        ///     var options = new ChangelogOptions() {
+        ///     var settings = new ChangeLogSettings() {
         ///         Version = "v0.1",
         ///         File = "changelog.md",
         ///         Subtitle = "my subtitle",
@@ -53,7 +53,7 @@ namespace Cake.ConventionalChangelog
         ///         From = "MY_TAG"       
         ///     };
         ///     
-        ///    GitChangelog(options);
+        ///    GitChangelog(settings);
         /// });
         /// </code>
         /// </example>
