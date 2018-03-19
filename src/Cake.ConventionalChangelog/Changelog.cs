@@ -9,7 +9,7 @@ namespace Cake.ConventionalChangelog
 {
     public class Changelog
     {
-        public Changelog() { }        
+        public Changelog() { }
 
         public void Generate(string Version)
         {
@@ -57,7 +57,8 @@ namespace Cake.ConventionalChangelog
             Writer writer = new Writer();
             string changelog = writer.WriteLog(commits, new WriterOptions()
             {
-                Version = options.Version
+                Version = options.Version,
+                Subtitle = options.Subtitle
             });
 
             string filePath = options.File;
