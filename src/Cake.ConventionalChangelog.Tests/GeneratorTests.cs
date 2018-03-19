@@ -223,8 +223,10 @@ namespace Cake.ConventionalChangelog.Tests
         }
 
         // Make sure the changelog generator replace current version changes on multiple calls
-        [Test]
-        public void AlteredCurrentVersionChangelog()
+        //[Test]
+        [TestCase(true, 5)]
+        [TestCase(false, 3)]
+        public void AlteredCurrentVersionChangelog(bool prepends, int length)
         {
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
@@ -234,37 +236,33 @@ namespace Cake.ConventionalChangelog.Tests
             var changelog = new Changelog();
 
             File.WriteAllText(TestRepoChangelogPath, "This is previous stuff");
-
-            changelog.Generate(new ChangelogOptions()
+            var options = new ChangelogOptions()
             {
                 Version = "1.0.0",
-                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
-            });
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR),
+                AlwaysPrepends = prepends
+            };
+
+            changelog.Generate(options);
 
             File.AppendAllText(readmePath, "\nsecond commit");
             repo.Index.Add("README.md");
             repo.Commit("fix(Foo): second commit");
 
-            changelog.Generate(new ChangelogOptions()
-            {
-                Version = "1.0.1",
-                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
-            });
+            options.Version = "1.0.1";
+            changelog.Generate(options);
 
             File.AppendAllText(readmePath, "\n3rd commit");
             repo.Index.Add("README.md");
             repo.Commit("fix(Foo): 3rd commit commit");
 
-            changelog.Generate(new ChangelogOptions()
-            {
-                Version = "1.0.1",
-                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
-            });
+            options.Version = "1.0.1";
+            changelog.Generate(options);
 
             var text = File.ReadAllText(TestRepoChangelogPath);
 
             var r = text.Split(new[] { "1.0.1" }, StringSplitOptions.None);
-            Assert.AreEqual(r.Length, 3);            
+            Assert.AreEqual(r.Length, length);
         }
     }
 }

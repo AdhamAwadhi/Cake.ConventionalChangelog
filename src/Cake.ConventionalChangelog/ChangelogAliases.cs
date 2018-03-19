@@ -80,7 +80,8 @@ namespace Cake.ConventionalChangelog
                 Grep = settings.Grep,
                 Subtitle = settings.Subtitle,
                 WorkingDirectory = settings.WorkingDirectory.FullPath,
-                File = settings.File.FullPath
+                File = settings.File.FullPath,
+                AlwaysPrepends = settings.AlwaysPrepends
             };
 
             var gen = new Changelog();

@@ -52,6 +52,11 @@ namespace Cake.ConventionalChangelog
         public string Grep { get; set; }
 
         /// <summary>
+        /// Always prepends change log and don't replace current version
+        /// </summary>
+        public bool AlwaysPrepends { get; set; }
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="ChangelogOptions"/> class.
         /// </summary>
         public ChangeLogSettings()
@@ -61,6 +66,7 @@ namespace Cake.ConventionalChangelog
             Subtitle = "";
             WorkingDirectory = ".";
             Grep = @"^feat|^fix|BREAKING";
+            AlwaysPrepends = false;
         }
     }
 }

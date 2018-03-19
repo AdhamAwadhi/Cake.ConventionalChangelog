@@ -73,7 +73,8 @@ namespace Cake.ConventionalChangelog
 
             //var matches = Regex.Match(currentlog, @"<a\s+name=\""(?<version>.+)""></a>.*");
             //if (matches.Success && options.Version.Equals(matches.Groups["version"].Value, StringComparison.InvariantCultureIgnoreCase))
-            if (currentlog.StartsWith(string.Format(Writer.HEADER_TPL_PRE, options.Version)))
+            if (!options.AlwaysPrepends &&
+                currentlog.StartsWith(string.Format(Writer.HEADER_TPL_PRE, options.Version)))
             {
                 currentlog = RemoveLastVersion(currentlog, options.Version);
             }
@@ -97,6 +98,7 @@ namespace Cake.ConventionalChangelog
         public string WorkingDirectory { get; set; }
         public string Subtitle { get; set; }
         public string Grep { get; set; }
+        public bool AlwaysPrepends { get; set; }
 
         public ChangelogOptions()
         {
@@ -105,6 +107,7 @@ namespace Cake.ConventionalChangelog
             Subtitle = "";
             WorkingDirectory = ".";
             Grep = @"^feat|^fix|BREAKING";
+            AlwaysPrepends = false;
         }
     }
 }
