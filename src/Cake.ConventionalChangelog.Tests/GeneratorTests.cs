@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
 using Cake.ConventionalChangelog;
 using LibGit2Sharp;
 using System.IO;
@@ -16,7 +14,6 @@ namespace Cake.ConventionalChangelog.Tests
     [TestFixture]
     public class GeneratorTests
     {
-        FileSystem fileSystem;
         Repository repo;
         string readmePath;
 
@@ -24,14 +21,13 @@ namespace Cake.ConventionalChangelog.Tests
         {
             get
             {
-                return fileSystem.Path.Combine(Util.TEST_REPO_DIR, "CHANGELOG.md");
+                return Path.Combine(Util.TEST_REPO_DIR, "CHANGELOG.md");
             }
         }
 
         [SetUp]
         public void Setup()
         {
-            fileSystem = new FileSystem();
             repo = Util.InitTestRepo();
             readmePath = Path.Combine(Util.TEST_REPO_DIR, "README.md");
         }
@@ -67,7 +63,7 @@ namespace Cake.ConventionalChangelog.Tests
             repo.Index.Add("README.md");
             repo.Commit("feat(Foo): Extended Foo");
 
-            var changelog = new Changelog(fileSystem);
+            var changelog = new Changelog();
 
             changelog.Generate(new ChangelogOptions()
             {
@@ -75,7 +71,7 @@ namespace Cake.ConventionalChangelog.Tests
                 WorkingDirectory = Util.TEST_REPO_DIR
             });
 
-            var text = fileSystem.File.ReadAllText(TestRepoChangelogPath);
+            var text = File.ReadAllText(TestRepoChangelogPath);
 
             var lines = text.Split('\n');
 
@@ -123,17 +119,17 @@ namespace Cake.ConventionalChangelog.Tests
         [Test]
         public void PassingOnlyVersionStringWorks()
         {
-            var changelog = new Changelog(fileSystem);
+            var changelog = new Changelog();
 
             changelog.Generate("1.0.1");
 
-            var text = fileSystem.File.ReadAllText("CHANGELOG.md");
+            var text = File.ReadAllText("CHANGELOG.md");
 
             Assert.False(String.IsNullOrEmpty(text));
             Assert.True(text.Contains("1.0.1"));
 
             // Cleanup changelog from local dir
-            fileSystem.File.Delete("CHANGELOG.md");
+            File.Delete("CHANGELOG.md");
         }
 
         [Test]
@@ -141,7 +137,7 @@ namespace Cake.ConventionalChangelog.Tests
         {
             var ex = Assert.Throws<Exception>(() =>
             {
-                var changelog = new Changelog(fileSystem);
+                var changelog = new Changelog();
                 changelog.Generate("");
             });
 
@@ -162,7 +158,7 @@ namespace Cake.ConventionalChangelog.Tests
         {
             Util.InitEmptyRepo();
 
-            var changelog = new Changelog(fileSystem);
+            var changelog = new Changelog();
 
             GitException ex = Assert.Throws<GitException>(() =>
             {
@@ -189,14 +185,14 @@ namespace Cake.ConventionalChangelog.Tests
             repo.Index.Add("README.md");
             repo.Commit("chore(Foo): Foo chore");
 
-            var changelog = new Changelog(fileSystem);
+            var changelog = new Changelog();
             changelog.Generate(new ChangelogOptions()
             {
                 Version = "1.0.1",
                 WorkingDirectory = Util.TEST_REPO_DIR
             });
 
-            var text = fileSystem.File.ReadAllText(TestRepoChangelogPath);
+            var text = File.ReadAllText(TestRepoChangelogPath);
 
             Assert.True(text.Contains("Foo feature"));
             Assert.False(text.Contains("Foo chore"));
@@ -211,9 +207,9 @@ namespace Cake.ConventionalChangelog.Tests
             repo.Index.Add("README.md");
             repo.Commit("feat(Foo): Foo feature");
 
-            var changelog = new Changelog(fileSystem);
+            var changelog = new Changelog();
 
-            fileSystem.File.WriteAllText(TestRepoChangelogPath, "This is previous stuff");
+            File.WriteAllText(TestRepoChangelogPath, "This is previous stuff");
 
             changelog.Generate(new ChangelogOptions()
             {
@@ -221,7 +217,7 @@ namespace Cake.ConventionalChangelog.Tests
                 WorkingDirectory = Util.TEST_REPO_DIR
             });
 
-            var text = fileSystem.File.ReadAllText(TestRepoChangelogPath);
+            var text = File.ReadAllText(TestRepoChangelogPath);
 
             Assert.True(Regex.Match(text, @"1.0.1[\s\S]+?This is previous stuff", RegexOptions.IgnoreCase | RegexOptions.Multiline).Success);
         }

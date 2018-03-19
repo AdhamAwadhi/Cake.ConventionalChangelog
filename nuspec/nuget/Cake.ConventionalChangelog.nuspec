@@ -11,10 +11,7 @@
     <projectUrl>https://github.com/AdhamAwadhi/Cake.ConventionalChangelog</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright (c) 2018 - Present</copyright>
-    <tags>Cake changelog git</tags>
-  <dependencies>
-      <dependency id="System.IO.Abstractions" version="2.0.0.101" />
-    </dependencies>
+    <tags>Cake changelog git</tags> 
   </metadata>
   <files>
     <file src="Cake.ConventionalChangelog.dll" target="lib\net46" />

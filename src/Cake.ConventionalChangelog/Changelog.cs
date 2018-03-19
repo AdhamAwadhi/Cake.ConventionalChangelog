@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO.Abstractions;
 using System.IO;
 
 namespace Cake.ConventionalChangelog
 {
     public class Changelog
     {
-        readonly IFileSystem fileSystem;
-
-        public Changelog() : this(new FileSystem()) { }
-        public Changelog(IFileSystem fileSystem)
-        {
-            this.fileSystem = fileSystem;
-        }
+        public Changelog() { }        
 
         public void Generate(string Version)
         {
@@ -67,15 +60,15 @@ namespace Cake.ConventionalChangelog
                 Version = options.Version
             });
 
-            string filePath = fileSystem.Path.Combine(options.WorkingDirectory, options.File);
+            string filePath = options.File;
 
             string currentlog = "";
-            if (fileSystem.File.Exists(filePath))
+            if (File.Exists(filePath))
             {
-                currentlog = fileSystem.File.ReadAllText(filePath, Encoding.UTF8);
+                currentlog = File.ReadAllText(filePath, Encoding.UTF8);
             }
 
-            fileSystem.File.WriteAllText(filePath, changelog + "\n" + currentlog, Encoding.UTF8);
+            File.WriteAllText(filePath, changelog + "\n" + currentlog, Encoding.UTF8);
         }
     }
 
