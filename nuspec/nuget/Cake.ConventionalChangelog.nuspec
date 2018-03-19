@@ -9,14 +9,15 @@
     <description>Cake Addin to generate changelog file depends on git log.</description>
     <licenseUrl>https://github.com/AdhamAwadhi/Cake.ConventionalChangelog/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/AdhamAwadhi/Cake.ConventionalChangelog</projectUrl>
-    <iconUrl></iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright (c) 2018 - Present</copyright>
     <tags>Cake changelog git</tags>
+  <dependencies>
+      <dependency id="System.IO.Abstractions" version="2.0.0.101" />
+    </dependencies>
   </metadata>
   <files>
-    <file src="Cake.ConventionalChangelog.dll" target="lib\net45" />
-    <file src="Cake.ConventionalChangelog.pdb" target="lib\net45" />
-    <file src="Cake.ConventionalChangelog.xml" target="lib\net45" />
+    <file src="Cake.ConventionalChangelog.dll" target="lib\net46" />
+    <file src="Cake.ConventionalChangelog.pdb" target="lib\net46" />
   </files>
 </package>
