@@ -14,7 +14,7 @@ namespace Cake.ConventionalChangelog.Tests
     [TestFixture]
     public class GitRepoTests
     {
-        private Git git = new Git("test_repo");
+        private Git git;
         private Repository repo;
         private string readmePath;
 
@@ -23,7 +23,9 @@ namespace Cake.ConventionalChangelog.Tests
         {
             repo = Util.InitTestRepo();
 
-            readmePath = Path.Combine(Util.TEST_REPO_DIR, "README.md");
+            readmePath = Util.GetFullPath(Util.TEST_REPO_DIR, "README.md");
+
+            git = new Git(Util.GetFullPath("test_repo"));
         }
 
         [TearDown]
@@ -40,7 +42,7 @@ namespace Cake.ConventionalChangelog.Tests
                 var git = new Git();
             });
         }
-        
+
         [Test]
         public void GetFirstCommit_RepoWithCommitReturnsEmptyString()
         {
@@ -57,14 +59,14 @@ namespace Cake.ConventionalChangelog.Tests
         {
             InitialCommit();
 
-            string readmePath = Path.Combine(Util.TEST_REPO_DIR, "README.md");
+            string readmePath = Util.GetFullPath(Util.TEST_REPO_DIR, "README.md");
 
             File.WriteAllText(readmePath, "Updating readme");
             repo.Index.Add("README.md");
             repo.Commit("feat(Stuff): Doing things over heah\n\nHey what up");
 
             List<CommitMessage> commits = git.GetCommits();
-            
+
             Assert.IsTrue(commits.Count == 1);
 
             var commit = commits.First();

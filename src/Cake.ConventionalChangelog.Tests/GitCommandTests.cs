@@ -13,13 +13,15 @@ namespace Cake.ConventionalChangelog.Tests
     [TestFixture]
     public class GitCommandTests
     {
-        private Git git = new Git("test_repo");
+        private Git git ;
         private Repository repo;
 
         [SetUp]
         public void Setup()
         {
             repo = Util.InitTestRepo();
+
+            git = new Git(Util.GetFullPath("test_repo"));
         }
 
         [TearDown]

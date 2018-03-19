@@ -5,17 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LibGit2Sharp;
+using NUnit.Framework;
 
 namespace Cake.ConventionalChangelog.Tests
 {
     public class Util
     {
+        public static string CurrentDirectory { get { return TestContext.CurrentContext.TestDirectory; } }
+
         public static string TEST_REPO_DIR { get { return "test_repo"; } }
+
         public static string EMPTY_REPO_DIR { get { return "empty_repo"; } }
 
         public static void InitUser()
         {
-            
+
         }
 
         public static void InitAll()
@@ -28,15 +32,7 @@ namespace Cake.ConventionalChangelog.Tests
 
         public static Repository InitTestRepo()
         {
-            if (Directory.Exists(TEST_REPO_DIR))
-            {
-                CleanupRepo(TEST_REPO_DIR);
-            }
-
-            Directory.CreateDirectory(TEST_REPO_DIR);
-            Repository.Init(TEST_REPO_DIR);
-
-            Repository repo = new Repository(TEST_REPO_DIR);
+            Repository repo = CleanupAndInitRepo(TEST_REPO_DIR);
 
             repo.Config.Set("user.name", "test", ConfigurationLevel.Local);
             repo.Config.Set("user.email", "blah@blah.bl", ConfigurationLevel.Local);
@@ -53,7 +49,9 @@ namespace Cake.ConventionalChangelog.Tests
 
         public static void CleanupRepos()
         {
-            (new List<string>() { TEST_REPO_DIR, EMPTY_REPO_DIR }).ForEach(x => CleanupRepo(x));
+            (new[] { TEST_REPO_DIR, EMPTY_REPO_DIR }).Select(x => GetFullPath(x))
+                .ToList()
+                .ForEach(x => CleanupRepo(x));
         }
 
         public static void CleanupRepo(string path)
@@ -77,20 +75,32 @@ namespace Cake.ConventionalChangelog.Tests
 
         public static Repository InitEmptyRepo()
         {
-            if (Directory.Exists(EMPTY_REPO_DIR))
-            {
-                CleanupRepo(EMPTY_REPO_DIR);
-            }
-
-            Directory.CreateDirectory(EMPTY_REPO_DIR);
-            Repository.Init(EMPTY_REPO_DIR);
-
-            Repository repo = new Repository(EMPTY_REPO_DIR);
+            Repository repo = CleanupAndInitRepo(EMPTY_REPO_DIR);
 
             repo.Config.Set("user.name", "test", ConfigurationLevel.Local);
             repo.Config.Set("user.email", "blah@blah.bl", ConfigurationLevel.Local);
 
             return repo;
+        }
+
+        private static Repository CleanupAndInitRepo(string path)
+        {
+            path = GetFullPath(path);
+
+            if (Directory.Exists(path))
+            {
+                CleanupRepo(path);
+            }
+
+            Directory.CreateDirectory(path);
+            Repository.Init(path);
+
+            return new Repository(path);
+        }
+
+        public static string GetFullPath(params string[] paths)
+        {
+            return Path.Combine(new[] { CurrentDirectory }.Concat(paths).ToArray());
         }
     }
 }

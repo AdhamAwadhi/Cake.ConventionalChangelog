@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Cake.ConventionalChangelog
 {
@@ -61,7 +62,8 @@ namespace Cake.ConventionalChangelog
                 Subtitle = options.Subtitle
             });
 
-            string filePath = options.File;
+            string filePath = Path.IsPathRooted(options.File) ? options.File :
+                        Path.Combine(options.WorkingDirectory, options.File);
 
             string currentlog = "";
             if (File.Exists(filePath))
@@ -69,7 +71,20 @@ namespace Cake.ConventionalChangelog
                 currentlog = File.ReadAllText(filePath, Encoding.UTF8);
             }
 
+            //var matches = Regex.Match(currentlog, @"<a\s+name=\""(?<version>.+)""></a>.*");
+            //if (matches.Success && options.Version.Equals(matches.Groups["version"].Value, StringComparison.InvariantCultureIgnoreCase))
+            if (currentlog.StartsWith(string.Format(Writer.HEADER_TPL_PRE, options.Version)))
+            {
+                currentlog = RemoveLastVersion(currentlog, options.Version);
+            }
+
             File.WriteAllText(filePath, changelog + "\n" + currentlog, Encoding.UTF8);
+        }
+
+        private string RemoveLastVersion(string currentlog, string version)
+        {
+            var first = currentlog.IndexOf("<a name=\"", 10);
+            return first <= 0 ? "" : currentlog.Substring(first, currentlog.Length - first);
         }
     }
 

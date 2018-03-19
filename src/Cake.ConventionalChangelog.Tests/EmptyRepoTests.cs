@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Cake.ConventionalChangelog;
 using NUnit.Framework;
+using System.IO;
 
 namespace Cake.ConventionalChangelog.Tests
 {
@@ -18,7 +19,7 @@ namespace Cake.ConventionalChangelog.Tests
         {
             Util.InitEmptyRepo();
 
-            git = new Git(Util.EMPTY_REPO_DIR);
+            git = new Git(Util.GetFullPath(Util.EMPTY_REPO_DIR));
         }
 
         [TearDown]

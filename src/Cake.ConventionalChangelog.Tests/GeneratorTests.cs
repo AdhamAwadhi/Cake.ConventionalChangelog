@@ -21,7 +21,7 @@ namespace Cake.ConventionalChangelog.Tests
         {
             get
             {
-                return Path.Combine(Util.TEST_REPO_DIR, "CHANGELOG.md");
+                return Util.GetFullPath(Util.TEST_REPO_DIR, "CHANGELOG.md");
             }
         }
 
@@ -29,7 +29,7 @@ namespace Cake.ConventionalChangelog.Tests
         public void Setup()
         {
             repo = Util.InitTestRepo();
-            readmePath = Path.Combine(Util.TEST_REPO_DIR, "README.md");
+            readmePath = Util.GetFullPath(Util.TEST_REPO_DIR, "README.md");
         }
 
         [TearDown]
@@ -68,7 +68,7 @@ namespace Cake.ConventionalChangelog.Tests
             changelog.Generate(new ChangelogOptions()
             {
                 Version = "1.0.1",
-                WorkingDirectory = Util.TEST_REPO_DIR
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
             });
 
             var text = File.ReadAllText(TestRepoChangelogPath);
@@ -165,7 +165,7 @@ namespace Cake.ConventionalChangelog.Tests
                 changelog.Generate(new ChangelogOptions()
                 {
                     Version = "1.0.0",
-                    WorkingDirectory = Util.EMPTY_REPO_DIR
+                    WorkingDirectory = Util.GetFullPath(Util.EMPTY_REPO_DIR)
                 });
             });
 
@@ -189,7 +189,7 @@ namespace Cake.ConventionalChangelog.Tests
             changelog.Generate(new ChangelogOptions()
             {
                 Version = "1.0.1",
-                WorkingDirectory = Util.TEST_REPO_DIR
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
             });
 
             var text = File.ReadAllText(TestRepoChangelogPath);
@@ -214,12 +214,57 @@ namespace Cake.ConventionalChangelog.Tests
             changelog.Generate(new ChangelogOptions()
             {
                 Version = "1.0.1",
-                WorkingDirectory = Util.TEST_REPO_DIR
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
             });
 
             var text = File.ReadAllText(TestRepoChangelogPath);
 
             Assert.True(Regex.Match(text, @"1.0.1[\s\S]+?This is previous stuff", RegexOptions.IgnoreCase | RegexOptions.Multiline).Success);
+        }
+
+        // Make sure the changelog generator replace current version changes on multiple calls
+        [Test]
+        public void AlteredCurrentVersionChangelog()
+        {
+            // Set up the repo
+            File.AppendAllText(readmePath, "\nThis is for a fix commit");
+            repo.Index.Add("README.md");
+            repo.Commit("feat(Foo): Foo feature");
+
+            var changelog = new Changelog();
+
+            File.WriteAllText(TestRepoChangelogPath, "This is previous stuff");
+
+            changelog.Generate(new ChangelogOptions()
+            {
+                Version = "1.0.0",
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
+            });
+
+            File.AppendAllText(readmePath, "\nsecond commit");
+            repo.Index.Add("README.md");
+            repo.Commit("fix(Foo): second commit");
+
+            changelog.Generate(new ChangelogOptions()
+            {
+                Version = "1.0.1",
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
+            });
+
+            File.AppendAllText(readmePath, "\n3rd commit");
+            repo.Index.Add("README.md");
+            repo.Commit("fix(Foo): 3rd commit commit");
+
+            changelog.Generate(new ChangelogOptions()
+            {
+                Version = "1.0.1",
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR)
+            });
+
+            var text = File.ReadAllText(TestRepoChangelogPath);
+
+            var r = text.Split(new[] { "1.0.1" }, StringSplitOptions.None);
+            Assert.AreEqual(r.Length, 3);            
         }
     }
 }

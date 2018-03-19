@@ -17,20 +17,21 @@ namespace Cake.ConventionalChangelog
         internal static readonly string LINK_COMMIT = "[{0}]({1}/commit/{2})";
         internal static readonly string COMMIT = "({0})";
         internal static readonly string EMPTY_COMPONENT = "$$";
-        internal static readonly string HEADER_TPL = "<a name=\"{0}\"></a>\n{1} ({2})\n\n";
+        internal static readonly string HEADER_TPL_PRE = "<a name=\"{0}\"></a>\n";
+        internal static readonly string HEADER_TPL = HEADER_TPL_PRE + "{1} ({2})\n\n";
 
         internal static string GetVersion(string version, string subtitle)
         {
             subtitle = !String.IsNullOrEmpty(subtitle) ? " " + subtitle : "";
             return String.Format(VERSION, version, subtitle);
         }
-        
+
         internal static string GetPatchVersion(string version, string subtitle)
         {
             subtitle = !String.IsNullOrEmpty(subtitle) ? " " + subtitle : "";
             return String.Format(PATCH_VERSION, version, subtitle);
         }
-        
+
         internal static string GetIssueLink(string repository, string issue)
         {
             return !String.IsNullOrEmpty(repository) ?
@@ -80,7 +81,7 @@ namespace Cake.ConventionalChangelog
             }
 
             SectionWriter writer = new SectionWriter(options);
-            
+
             /*
             writer.header(options.version);
             writer.section('Bug Fixes', sections.Fixesfix);
@@ -98,7 +99,8 @@ namespace Cake.ConventionalChangelog
         }
     }
 
-    public class WriterOptions {
+    public class WriterOptions
+    {
         public Func<string, string> IssueLink { get; set; }
         public Func<string, string> CommitLink { get; set; }
         public string Version { get; set; }
@@ -142,7 +144,7 @@ namespace Cake.ConventionalChangelog
             string versionText = (version.Split('.').Length >= 3 && version.Split('.')[2] == "0") ?
                 Writer.GetVersion(version, subtitle) :
                 Writer.GetPatchVersion(version, subtitle);
-            
+
             SectionLog.Append(String.Format(Writer.HEADER_TPL, version, versionText, DateTime.Now.ToString("yyyy-MM-dd")));
         }
 
@@ -193,7 +195,8 @@ namespace Cake.ConventionalChangelog
         }
     }
 
-    internal class Sections {
+    internal class Sections
+    {
         public Section Fixes { get; set; }
         public Section Feats { get; set; }
         public Section Breaks { get; set; }
@@ -205,8 +208,10 @@ namespace Cake.ConventionalChangelog
             Breaks = new Section("break");
         }
 
-        public Section GetSection(string section) {
-            switch (section) {
+        public Section GetSection(string section)
+        {
+            switch (section)
+            {
                 case "fix":
                     return Fixes;
                 case "feat":
@@ -244,7 +249,8 @@ namespace Cake.ConventionalChangelog
             Messages = new Dictionary<string, List<CommitMessage>>();
         }
 
-        public void Add(string name, CommitMessage message) {
+        public void Add(string name, CommitMessage message)
+        {
             if (!Messages.ContainsKey(name)) Messages.Add(name, new List<CommitMessage>());
             Messages[name].Add(message);
         }
