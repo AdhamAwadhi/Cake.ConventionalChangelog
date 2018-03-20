@@ -57,6 +57,11 @@ namespace Cake.ConventionalChangelog
         public bool AlwaysPrepends { get; set; }
 
         /// <summary>
+        /// Write others section
+        /// </summary>
+        public bool WriteOthers { get; set; }
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="ChangelogOptions"/> class.
         /// </summary>
         public ChangeLogSettings()
@@ -65,8 +70,9 @@ namespace Cake.ConventionalChangelog
             File = "CHANGELOG.md";
             Subtitle = "";
             WorkingDirectory = ".";
-            Grep = @"^feat|^fix|BREAKING";
             AlwaysPrepends = false;
+            WriteOthers = true;
+            Grep = @"^feat|^fix|BREAKING" + (WriteOthers ? "" : "");
         }
     }
 }

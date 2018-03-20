@@ -59,7 +59,8 @@ namespace Cake.ConventionalChangelog
             string changelog = writer.WriteLog(commits, new WriterOptions()
             {
                 Version = options.Version,
-                Subtitle = options.Subtitle
+                Subtitle = options.Subtitle,
+                WriteOthers = options.WriteOthers
             });
 
             string filePath = Path.IsPathRooted(options.File) ? options.File :
@@ -99,6 +100,7 @@ namespace Cake.ConventionalChangelog
         public string Subtitle { get; set; }
         public string Grep { get; set; }
         public bool AlwaysPrepends { get; set; }
+        public bool WriteOthers { get; set; }
 
         public ChangelogOptions()
         {
@@ -108,6 +110,7 @@ namespace Cake.ConventionalChangelog
             WorkingDirectory = ".";
             Grep = @"^feat|^fix|BREAKING";
             AlwaysPrepends = false;
+            WriteOthers = true;
         }
     }
 }

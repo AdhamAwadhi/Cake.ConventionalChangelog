@@ -73,6 +73,10 @@ namespace Cake.ConventionalChangelog
                         section.Add(component, commit);
                     }
                 }
+                else
+                {
+                    sections.Others.Add(component, commit);
+                }
 
                 foreach (var breakMessage in commit.Breaks)
                 {
@@ -94,6 +98,8 @@ namespace Cake.ConventionalChangelog
             writer.Section("Bug Fixes", sections.Fixes);
             writer.Section("Features", sections.Feats);
             writer.Section("Breaking Changes", sections.Breaks);
+            if (options.WriteOthers)
+                writer.Section("Others", sections.Others);
 
             return writer.SectionLog.ToString();
         }
@@ -106,6 +112,7 @@ namespace Cake.ConventionalChangelog
         public string Version { get; set; }
         public string Repository { get; set; }
         public string Subtitle { get; set; }
+        public bool WriteOthers { get; set; }
 
         public WriterOptions()
         {
@@ -200,12 +207,14 @@ namespace Cake.ConventionalChangelog
         public Section Fixes { get; set; }
         public Section Feats { get; set; }
         public Section Breaks { get; set; }
+        public Section Others { get; set; }
 
         public Sections()
         {
             Fixes = new Section("fix");
             Feats = new Section("feat");
             Breaks = new Section("break");
+            Others = new Section("others");
         }
 
         public Section GetSection(string section)
