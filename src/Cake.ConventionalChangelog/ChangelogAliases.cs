@@ -59,8 +59,9 @@ namespace Cake.ConventionalChangelog
         /// </example>
         /// <param name="context">The context.</param>
         /// <param name="settings">changelog settings.</param>
+        /// <returns>Generated change log </returns>
         [CakeMethodAlias]
-        public static void GitChangelog(this ICakeContext context, ChangeLogSettings settings)
+        public static string GitChangelog(this ICakeContext context, ChangeLogSettings settings)
         {
             if (context == null)
             {
@@ -85,7 +86,7 @@ namespace Cake.ConventionalChangelog
             };
 
             var gen = new Changelog();
-            gen.Generate(options);
+            return gen.Generate(options);
         }
     }
 }

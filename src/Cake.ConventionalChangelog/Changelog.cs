@@ -19,7 +19,8 @@ namespace Cake.ConventionalChangelog
                 Version = Version
             });
         }
-        public void Generate(ChangelogOptions options)
+
+        public string Generate(ChangelogOptions options)
         {
             if (String.IsNullOrEmpty(options.Version))
             {
@@ -39,10 +40,10 @@ namespace Cake.ConventionalChangelog
                 throw new GitException("Failed to read git tags: " + ex.Message, ex);
             }
 
-            GetChangelogCommits(tag, options);
+            return GetChangelogCommits(tag, options);
         }
 
-        private void GetChangelogCommits(string tag, ChangelogOptions options)
+        private string GetChangelogCommits(string tag, ChangelogOptions options)
         {
             string from = (!String.IsNullOrEmpty(tag)) ? tag : options.From;
 
@@ -50,10 +51,10 @@ namespace Cake.ConventionalChangelog
             var git = new Git(options.WorkingDirectory);
             var commits = git.GetCommits(grep: options.Grep, from: from, to: options.To ?? "HEAD");
 
-            WriteLog(commits, options);
+            return WriteLog(commits, options);
         }
 
-        private void WriteLog(List<CommitMessage> commits, ChangelogOptions options)
+        private string WriteLog(List<CommitMessage> commits, ChangelogOptions options)
         {
             Writer writer = new Writer();
             string changelog = writer.WriteLog(commits, new WriterOptions()
@@ -81,6 +82,8 @@ namespace Cake.ConventionalChangelog
             }
 
             File.WriteAllText(filePath, changelog + "\n" + currentlog, Encoding.UTF8);
+
+            return changelog;
         }
 
         private string RemoveLastVersion(string currentlog, string version)
