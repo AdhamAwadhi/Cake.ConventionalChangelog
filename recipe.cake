@@ -8,7 +8,8 @@ BuildParameters.SetParameters(context: Context,
                             title: "Cake.ConventionalChangelog",
                             repositoryOwner: "AdhamAwadhi",
                             repositoryName: "Cake.ConventionalChangelog",
-                            appVeyorAccountName: "AdhamAwadhi");
+                            appVeyorAccountName: "AdhamAwadhi",
+                            shouldRunGitVersion: true);
 
 BuildParameters.PrintParameters(Context);
 
