@@ -30,6 +30,11 @@ namespace Cake.ConventionalChangelog.Tests
             InitEmptyRepo();
         }
 
+        public static Signature InitSignature()
+        {
+            return new Signature("test", "blah@blah.bl", DateTime.Now);            
+        }
+
         public static Repository InitTestRepo()
         {
             Repository repo = CleanupAndInitRepo(TEST_REPO_DIR);

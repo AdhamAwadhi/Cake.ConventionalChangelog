@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Cake.ConventionalChangelog;
 using LibGit2Sharp;
 using System.IO;
+using Cake.ConventionalChangelog.Tests.TestTools;
 
 namespace Cake.ConventionalChangelog.Tests
 {
@@ -33,7 +34,7 @@ namespace Cake.ConventionalChangelog.Tests
         [Test]
         public void BadCommandThrows()
         {
-            Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject obj = new Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject(git);
+            var obj = new PrivateObject(git);
 
             GitException ex = Assert.Throws<GitException>(() =>
             {

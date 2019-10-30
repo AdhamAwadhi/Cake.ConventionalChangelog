@@ -8,6 +8,7 @@ using Cake.ConventionalChangelog;
 using LibGit2Sharp;
 using System.IO;
 using System.Reflection;
+using Cake.ConventionalChangelog.Tests.TestTools;
 
 namespace Cake.ConventionalChangelog.Tests
 {
@@ -15,12 +16,17 @@ namespace Cake.ConventionalChangelog.Tests
     public class GitRepoTests
     {
         private Git git;
+        Signature author;
+        Signature committer;
         private Repository repo;
         private string readmePath;
 
         [SetUp]
         public void Setup()
         {
+            author = Util.InitSignature();
+            committer = author;
+
             repo = Util.InitTestRepo();
 
             readmePath = Util.GetFullPath(Util.TEST_REPO_DIR, "README.md");
@@ -63,7 +69,7 @@ namespace Cake.ConventionalChangelog.Tests
 
             File.WriteAllText(readmePath, "Updating readme");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Stuff): Doing things over heah\n\nHey what up");
+            repo.Commit("feat(Stuff): Doing things over heah\n\nHey what up", author, committer);
 
             List<CommitMessage> commits = git.GetCommits();
 
@@ -155,7 +161,7 @@ namespace Cake.ConventionalChangelog.Tests
 
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("fix(README): I did stuff and fixed #200");
+            repo.Commit("fix(README): I did stuff and fixed #200", author, committer);
 
             var msg = git.GetCommits()[0];
 
@@ -171,10 +177,10 @@ namespace Cake.ConventionalChangelog.Tests
             // Add an new commit
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("fix(README): This subject is way way over eighty characters, which it shouldn't be because that's basically useless for most commit parsing utilities, including this one.");
+            repo.Commit("fix(README): This subject is way way over eighty characters, which it shouldn't be because that's basically useless for most commit parsing utilities, including this one.", author, committer);
 
             var msg = git.GetCommits()[0];
-            Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject obj = new Microsoft.VisualStudio.TestTools.UnitTesting.PrivateObject(git);
+            var obj = new PrivateObject(git);
 
             int maxLength = Int32.Parse(obj.GetField("MAX_SUBJECT_LENGTH", BindingFlags.NonPublic | BindingFlags.Static).ToString());
 
@@ -188,7 +194,7 @@ namespace Cake.ConventionalChangelog.Tests
 
             repo.Index.Add("README.md");
 
-            repo.Commit("Initial commit");
+            repo.Commit("Initial commit", author, committer);
         }
 
         public void AddFeatCommit()
@@ -197,7 +203,7 @@ namespace Cake.ConventionalChangelog.Tests
 
             repo.Index.Add("README.md");
 
-            repo.Commit("feat(README): Updated readme");
+            repo.Commit("feat(README): Updated readme", author, committer);
         }
 
         public void AddFixCommit()
@@ -206,7 +212,7 @@ namespace Cake.ConventionalChangelog.Tests
 
             repo.Index.Add("README.md");
 
-            repo.Commit("fix(README): Fixed readme" + Environment.NewLine + Environment.NewLine + "Fixes #234, Fixes #456");
+            repo.Commit("fix(README): Fixed readme" + Environment.NewLine + Environment.NewLine + "Fixes #234, Fixes #456", author, committer);
         }
         #endregion
     }

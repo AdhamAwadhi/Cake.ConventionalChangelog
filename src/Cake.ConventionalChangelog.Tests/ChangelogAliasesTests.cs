@@ -1,6 +1,6 @@
 ﻿using Cake.ConventionalChangelog;
 using NUnit.Framework;
-using Should;
+using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace Cake.ConventionalChangelog.Tests
             var result = Assert.Catch(() => ChangelogAliases.GitChangelog(null, "v1"));
 
             // Then
-            result.ShouldBeType<ArgumentNullException>().ParamName.ShouldEqual("context");
+            result.ShouldBeOfType<ArgumentNullException>().ParamName.ShouldBe("context");
         }
     }
 }
