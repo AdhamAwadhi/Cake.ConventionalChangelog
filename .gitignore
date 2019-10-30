@@ -287,5 +287,6 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /src/.nuget/NuGet.exe
-/tools/
+/tools/*
+!tools/packages.config
 /BuildArtifacts/
