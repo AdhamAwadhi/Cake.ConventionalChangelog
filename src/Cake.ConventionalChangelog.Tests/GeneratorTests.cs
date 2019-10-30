@@ -14,6 +14,8 @@ namespace Cake.ConventionalChangelog.Tests
     [TestFixture]
     public class GeneratorTests
     {
+        Signature author;
+        Signature committer;
         Repository repo;
         string readmePath;
 
@@ -28,6 +30,9 @@ namespace Cake.ConventionalChangelog.Tests
         [SetUp]
         public void Setup()
         {
+            author = Util.InitSignature();
+            committer = author;
+
             repo = Util.InitTestRepo();
             readmePath = Util.GetFullPath(Util.TEST_REPO_DIR, "README.md");
         }
@@ -48,20 +53,20 @@ namespace Cake.ConventionalChangelog.Tests
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Foo): Adding foo feature\n\nFixes #123, #245\nFixed #8000\n\nBREAKING CHANGE: Breaks Mr. Guy!");
+            repo.Commit("feat(Foo): Adding foo feature\n\nFixes #123, #245\nFixed #8000\n\nBREAKING CHANGE: Breaks Mr. Guy!", author, committer);
 
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("fix(Bar): Fixed something in Bar\n\nFixes #200\n\nBREAKING CHANGE: I broke it");
+            repo.Commit("fix(Bar): Fixed something in Bar\n\nFixes #200\n\nBREAKING CHANGE: I broke it", author, committer);
 
             File.AppendAllText(readmePath, "\nThis is for another commit, which should not show up");
             repo.Index.Add("README.md");
-            repo.Commit("chore(Bar): Did a a chore");
+            repo.Commit("chore(Bar): Did a a chore", author, committer);
 
             File.AppendAllText(readmePath, "\nThis is the final commit which should go with the first one");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Foo): Extended Foo");
+            repo.Commit("feat(Foo): Extended Foo", author, committer);
 
             var changelog = new Changelog();
 
@@ -121,24 +126,24 @@ namespace Cake.ConventionalChangelog.Tests
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Foo): Adding foo feature\n\nFixes #123, #245\nFixed #8000\n\nBREAKING CHANGE: Breaks Mr. Guy!");
+            repo.Commit("feat(Foo): Adding foo feature\n\nFixes #123, #245\nFixed #8000\n\nBREAKING CHANGE: Breaks Mr. Guy!", author, committer);
 
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("fix(Bar): Fixed something in Bar\n\nFixes #200\n\nBREAKING CHANGE: I broke it");
+            repo.Commit("fix(Bar): Fixed something in Bar\n\nFixes #200\n\nBREAKING CHANGE: I broke it", author, committer);
 
             File.AppendAllText(readmePath, "\nThis is for another commit, which should not show up if Grep does not contain");
             repo.Index.Add("README.md");
-            repo.Commit("chore(Bar): Did a a chore\n\nmessage under chore");
+            repo.Commit("chore(Bar): Did a a chore\n\nmessage under chore", author, committer);
 
             File.AppendAllText(readmePath, "\nThis is for normal commit, with normal message");
             repo.Index.Add("README.md");
-            repo.Commit("normal message which is Conventional");
+            repo.Commit("normal message which is Conventional", author, committer);
 
             File.AppendAllText(readmePath, "\nThis is the final commit which should go with the first one");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Foo): Extended Foo");
+            repo.Commit("feat(Foo): Extended Foo", author, committer);
 
             var changelog = new Changelog();
 
@@ -258,11 +263,11 @@ namespace Cake.ConventionalChangelog.Tests
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Foo): Foo feature");
+            repo.Commit("feat(Foo): Foo feature", author, committer);
 
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("chore(Foo): Foo chore");
+            repo.Commit("chore(Foo): Foo chore", author, committer);
 
             var changelog = new Changelog();
             changelog.Generate(new ChangelogOptions()
@@ -284,7 +289,7 @@ namespace Cake.ConventionalChangelog.Tests
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Foo): Foo feature");
+            repo.Commit("feat(Foo): Foo feature", author, committer);
 
             var changelog = new Changelog();
 
@@ -310,7 +315,7 @@ namespace Cake.ConventionalChangelog.Tests
             // Set up the repo
             File.AppendAllText(readmePath, "\nThis is for a fix commit");
             repo.Index.Add("README.md");
-            repo.Commit("feat(Foo): Foo feature");
+            repo.Commit("feat(Foo): Foo feature", author, committer);
 
             var changelog = new Changelog();
 
@@ -326,14 +331,14 @@ namespace Cake.ConventionalChangelog.Tests
 
             File.AppendAllText(readmePath, "\nsecond commit");
             repo.Index.Add("README.md");
-            repo.Commit("fix(Foo): second commit");
+            repo.Commit("fix(Foo): second commit", author, committer);
 
             options.Version = "1.0.1";
             changelog.Generate(options);
 
             File.AppendAllText(readmePath, "\n3rd commit");
             repo.Index.Add("README.md");
-            repo.Commit("fix(Foo): 3rd commit commit");
+            repo.Commit("fix(Foo): 3rd commit commit", author, committer);
 
             options.Version = "1.0.1";
             changelog.Generate(options);
