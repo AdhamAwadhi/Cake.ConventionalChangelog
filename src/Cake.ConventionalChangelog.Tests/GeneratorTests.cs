@@ -199,6 +199,68 @@ namespace Cake.ConventionalChangelog.Tests
             // TODO: Add tests for breaking changes once their formatting is fixed
         }
 
+        [Test]
+        public void FullLineByLineGrepFullTestWithTag()
+        {
+            // Set up the repo
+            File.AppendAllText(readmePath, "\nThis is for a fix commit");
+            repo.Index.Add("README.md");
+            repo.Commit("feat(Foo): Adding foo feature\n\nFixes #123, #245\nFixed #8000\n\nBREAKING CHANGE: Breaks Mr. Guy!", author, committer);
+
+            // Set up the repo
+            File.AppendAllText(readmePath, "\nThis is for a fix commit");
+            repo.Index.Add("README.md");
+            repo.Commit("fix(Bar): Fixed something in Bar\n\nFixes #200\n\nBREAKING CHANGE: I broke it", author, committer);
+
+            File.AppendAllText(readmePath, "\nThis is for another commit, which should not show up if Grep does not contain");
+            repo.Index.Add("README.md");
+            repo.Commit("chore(Bar): Did a a chore\n\nmessage under chore", author, committer);
+
+            repo.Tags.Add("v1.0.0", repo.Head.Tip);
+
+            File.AppendAllText(readmePath, "\nThis is for normal commit, with normal message");
+            repo.Index.Add("README.md");
+            repo.Commit("normal message which is Conventional", author, committer);
+
+            File.AppendAllText(readmePath, "\nThis is the final commit which should go with the first one");
+            repo.Index.Add("README.md");
+            repo.Commit("feat(Foo): Extended Foo", author, committer);
+
+            var changelog = new Changelog();
+
+            changelog.Generate(new ChangelogOptions()
+            {
+                Version = "1.0.1",
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR),
+                Grep = ".*"
+            });
+
+            var text = File.ReadAllText(TestRepoChangelogPath);
+
+            var lines = text.Split('\n');
+
+            /* 
+                0  <a name="1.0.1"></a>
+                1  ### 1.0.1 (2019-11-15)
+                2  
+                3  
+                4  #### Features
+                5  
+                6  * **Foo:** Extended Foo ((be8d7e54))
+                7  
+                8  
+                9  
+            */
+
+            Assert.True(lines[0].Contains("1.0.1"));
+            Assert.True(lines[1].StartsWith("### 1.0.1"));
+            Assert.True(lines[4].StartsWith("#### Features"));
+            Assert.True(lines[6].StartsWith("* **Foo:** Extended Foo"));
+            Assert.True(Regex.Match(lines[6], @"\(\w{8}\)").Success);
+
+            // TODO: Add tests for breaking changes once their formatting is fixed
+        }
+
         [Ignore("Cannot pass only the version number when testing as the repo directory under test mode is not the current directory")]
         [Test]
         public void PassingOnlyVersionStringWorks()
