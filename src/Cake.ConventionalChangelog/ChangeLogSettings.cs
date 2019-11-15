@@ -62,7 +62,12 @@ namespace Cake.ConventionalChangelog
         public bool WriteOthers { get; set; }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ChangelogOptions"/> class.
+        /// Write normal messages that is not matched COMMIT_PATTERN = @"^(\w*)(\(([\w\$\.\-\* ]*)\))?\: (.*)$"
+        /// </summary>
+        public bool WriteNormalMessages { get; set; }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ChangeLogSettings"/> class.
         /// </summary>
         public ChangeLogSettings()
         {

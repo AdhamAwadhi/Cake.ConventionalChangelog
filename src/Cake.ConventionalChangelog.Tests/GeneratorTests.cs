@@ -81,25 +81,28 @@ namespace Cake.ConventionalChangelog.Tests
             var lines = text.Split('\n');
 
             /* 
-                0  "<a name=\"1.0.1\"></a>
-                1  ### 1.0.1 (2015-02-06)
-                2  
-                3  
-                4  #### Bug Fixes
-                5  
-                6  * **Bar:** Fixed something in Bar ((35a561de), closes (#200))
-                7  
-                8  
-                9  #### Features
-                10 
-                11 * **Foo:** Extended Foo ((67444660))
-                12 * **Foo:** Adding foo feature ((f53bb0df), closes (#123), (#245), (#8000))
-                13 
-                14 
-                15 #### Breaking Changes
-                16 
-                17 * **Bar:** due to 718971e7, I broke it ((718971e7))
-                18 * **Foo:** due to 3eb901db, Breaks Mr. Guy! ((3eb901db))
+                0  <a name="1.0.1"></a> 
+                1  ### 1.0.1 (2019-11-15) 
+                2   
+                3   
+                4  #### Bug Fixes 
+                5   
+                6  * **Bar:** Fixed something in Bar ((7059c009), closes (#200)) 
+                7   
+                8   
+                9  #### Features 
+               10   
+               11  * **Foo:** 
+               12    * Extended Foo ((0e4414b9)) 
+               13    * Adding foo feature ((0b3ede82), closes (#123), (#245), (#8000)) 
+               14   
+               15   
+               16  #### Breaking Changes 
+               17   
+               18  * **Bar:** due to 7059c009, I broke it ((7059c009)) 
+               19  * **Foo:** due to 0b3ede82, Breaks Mr. Guy! ((0b3ede82)) 
+               20   
+               21   
             */
 
             Assert.True(lines[0].Contains("1.0.1"));
@@ -108,14 +111,15 @@ namespace Cake.ConventionalChangelog.Tests
             Assert.True(lines[6].StartsWith("* **Bar:** Fixed something in Bar"));
             Assert.True(lines[6].EndsWith("closes (#200))"));
             Assert.True(lines[9].StartsWith("#### Features"));
-            Assert.True(lines[11].StartsWith("* **Foo:** Extended Foo"));
-            Assert.True(Regex.Match(lines[11], @"\(\w{8}\)").Success);
-            Assert.True(lines[12].StartsWith("* **Foo:** Adding foo feature"));
-            Assert.True(lines[15].StartsWith("#### Breaking Changes"));
-            Assert.True(lines[17].StartsWith("* **Bar:** due to"));
-            Assert.True(lines[17].Contains("I broke it"));
-            Assert.True(lines[18].StartsWith("* **Foo:** due to"));
-            Assert.True(lines[18].Contains("Breaks Mr. Guy!"));
+            Assert.True(lines[11].StartsWith("* **Foo:**"));
+            Assert.True(lines[12].StartsWith("  * Extended Foo"));
+            Assert.True(Regex.Match(lines[12], @"\(\w{8}\)").Success);
+            Assert.True(lines[13].StartsWith("  * Adding foo feature"));
+            Assert.True(lines[16].StartsWith("#### Breaking Changes"));
+            Assert.True(lines[18].StartsWith("* **Bar:** due to"));
+            Assert.True(lines[18].Contains("I broke it"));
+            Assert.True(lines[19].StartsWith("* **Foo:** due to"));
+            Assert.True(lines[19].Contains("Breaks Mr. Guy!"));
 
             // TODO: Add tests for breaking changes once their formatting is fixed
         }
@@ -159,25 +163,120 @@ namespace Cake.ConventionalChangelog.Tests
             var lines = text.Split('\n');
 
             /* 
-                0  "<a name=\"1.0.1\"></a>
-                1  ### 1.0.1 (2015-02-06)
-                2  
-                3  
-                4  #### Bug Fixes
-                5  
-                6  * **Bar:** Fixed something in Bar ((35a561de), closes (#200))
-                7  
-                8  
-                9  #### Features
-                10 
-                11 * **Foo:** Extended Foo ((67444660))
-                12 * **Foo:** Adding foo feature ((f53bb0df), closes (#123), (#245), (#8000))
-                13 
-                14 
-                15 #### Breaking Changes
-                16 
-                17 * **Bar:** due to 718971e7, I broke it ((718971e7))
-                18 * **Foo:** due to 3eb901db, Breaks Mr. Guy! ((3eb901db))
+                0  <a name="1.0.1"></a> 
+                1  ### 1.0.1 (2019-11-15) 
+                2   
+                3   
+                4  #### Bug Fixes 
+                5   
+                6  * **Bar:** Fixed something in Bar ((8cea0660), closes (#200)) 
+                7   
+                8   
+                9  #### Features 
+               10   
+               11  * **Foo:** 
+               12    * Extended Foo ((d7f45532)) 
+               13    * Adding foo feature ((182a091a), closes (#123), (#245), (#8000)) 
+               14   
+               15   
+               16  #### Breaking Changes 
+               17   
+               18  * **Bar:** due to 8cea0660, I broke it ((8cea0660)) 
+               19  * **Foo:** due to 182a091a, Breaks Mr. Guy! ((182a091a)) 
+               20   
+               21   
+               22  #### Others 
+               23   
+               24  * **Bar:** Did a a chore ((a6ab8da4)) 
+               25   
+*/
+
+            Assert.True(lines[0].Contains("1.0.1"));
+            Assert.True(lines[1].StartsWith("### 1.0.1"));
+            Assert.True(lines[4].StartsWith("#### Bug Fixes"));
+            Assert.True(lines[6].StartsWith("* **Bar:** Fixed something in Bar"));
+            Assert.True(lines[6].EndsWith("closes (#200))"));
+            Assert.True(lines[9].StartsWith("#### Features"));
+            Assert.True(lines[11].StartsWith("* **Foo:**"));
+            Assert.True(lines[12].StartsWith("  * Extended Foo"));
+            Assert.True(Regex.Match(lines[12], @"\(\w{8}\)").Success);
+            Assert.True(lines[13].StartsWith("  * Adding foo feature"));
+            Assert.True(lines[16].StartsWith("#### Breaking Changes"));
+            Assert.True(lines[18].StartsWith("* **Bar:** due to"));
+            Assert.True(lines[18].Contains("I broke it"));
+            Assert.True(lines[19].StartsWith("* **Foo:** due to"));
+            Assert.True(lines[19].Contains("Breaks Mr. Guy!"));
+            Assert.True(lines[24].StartsWith("* **Bar:** Did a a chore"));
+
+            // TODO: Add tests for breaking changes once their formatting is fixed
+        }
+
+        [Test]
+        public void FullLineByLineGrepFullTestWithNormalMessages()
+        {
+            // Set up the repo
+            File.AppendAllText(readmePath, "\nThis is for a fix commit");
+            repo.Index.Add("README.md");
+            repo.Commit("feat(Foo): Adding foo feature\n\nFixes #123, #245\nFixed #8000\n\nBREAKING CHANGE: Breaks Mr. Guy!", author, committer);
+
+            // Set up the repo
+            File.AppendAllText(readmePath, "\nThis is for a fix commit");
+            repo.Index.Add("README.md");
+            repo.Commit("fix(Bar): Fixed something in Bar\n\nFixes #200\n\nBREAKING CHANGE: I broke it", author, committer);
+
+            File.AppendAllText(readmePath, "\nThis is for another commit, which should not show up if Grep does not contain");
+            repo.Index.Add("README.md");
+            repo.Commit("chore(Bar): Did a a chore\n\nmessage under chore", author, committer);
+
+            File.AppendAllText(readmePath, "\nThis is for normal commit, with normal message");
+            repo.Index.Add("README.md");
+            repo.Commit("normal message which is Conventional", author, committer);
+
+            File.AppendAllText(readmePath, "\nThis is the final commit which should go with the first one");
+            repo.Index.Add("README.md");
+            repo.Commit("feat(Foo): Extended Foo", author, committer);
+
+            var changelog = new Changelog();
+
+            changelog.Generate(new ChangelogOptions()
+            {
+                Version = "1.0.1",
+                WorkingDirectory = Util.GetFullPath(Util.TEST_REPO_DIR),
+                Grep = ".*",
+                WriteNormalMessages = true
+            });
+
+            var text = File.ReadAllText(TestRepoChangelogPath);
+
+            var lines = text.Split('\n');
+
+            /* 
+                0  <a name="1.0.1"></a> 
+                1  ### 1.0.1 (2019-11-15) 
+                2   
+                3   
+                4  #### Bug Fixes 
+                5   
+                6  * **Bar:** Fixed something in Bar ((ebc009c0), closes (#200)) 
+                7   
+                8   
+                9  #### Features 
+               10   
+               11  * **Foo:** 
+               12    * Extended Foo ((e12344df)) 
+               13    * Adding foo feature ((b454a440), closes (#123), (#245), (#8000)) 
+               14   
+               15   
+               16  #### Breaking Changes 
+               17   
+               18  * **Bar:** due to ebc009c0, I broke it ((ebc009c0)) 
+               19  * **Foo:** due to b454a440, Breaks Mr. Guy! ((b454a440)) 
+               20   
+               21   
+               22  #### Others 
+               23   
+               24  * normal message which is Conventional ((8bc93dfa)) 
+               25  * **Bar:** Did a a chore ((6cea2e9b))                 
             */
 
             Assert.True(lines[0].Contains("1.0.1"));
@@ -186,15 +285,17 @@ namespace Cake.ConventionalChangelog.Tests
             Assert.True(lines[6].StartsWith("* **Bar:** Fixed something in Bar"));
             Assert.True(lines[6].EndsWith("closes (#200))"));
             Assert.True(lines[9].StartsWith("#### Features"));
-            Assert.True(lines[11].StartsWith("* **Foo:** Extended Foo"));
-            Assert.True(Regex.Match(lines[11], @"\(\w{8}\)").Success);
-            Assert.True(lines[12].StartsWith("* **Foo:** Adding foo feature"));
-            Assert.True(lines[15].StartsWith("#### Breaking Changes"));
-            Assert.True(lines[17].StartsWith("* **Bar:** due to"));
-            Assert.True(lines[17].Contains("I broke it"));
-            Assert.True(lines[18].StartsWith("* **Foo:** due to"));
-            Assert.True(lines[18].Contains("Breaks Mr. Guy!"));
-            Assert.True(lines[23].StartsWith("* **Bar:** Did a a chore"));
+            Assert.True(lines[11].StartsWith("* **Foo:**"));
+            Assert.True(lines[12].StartsWith("  * Extended Foo"));
+            Assert.True(Regex.Match(lines[12], @"\(\w{8}\)").Success);
+            Assert.True(lines[13].StartsWith("  * Adding foo feature"));
+            Assert.True(lines[16].StartsWith("#### Breaking Changes"));
+            Assert.True(lines[18].StartsWith("* **Bar:** due to"));
+            Assert.True(lines[18].Contains("I broke it"));
+            Assert.True(lines[19].StartsWith("* **Foo:** due to"));
+            Assert.True(lines[19].Contains("Breaks Mr. Guy!"));
+            Assert.True(lines[24].StartsWith("* normal message which is Conventional"));
+            Assert.True(lines[25].StartsWith("* **Bar:** Did a a chore"));
 
             // TODO: Add tests for breaking changes once their formatting is fixed
         }

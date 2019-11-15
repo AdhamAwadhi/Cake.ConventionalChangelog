@@ -106,7 +106,7 @@ namespace Cake.ConventionalChangelog
             }
         }
 
-        public List<CommitMessage> GetCommits(string grep = @"^feat|^fix|BREAKING", string format = @"%H%n%s%n%b%n==END==", string from = "", string to = "HEAD")
+        public List<CommitMessage> GetCommits(string grep = @"^feat|^fix|BREAKING", string format = @"%H%n%s%n%b%n==END==", string from = "", string to = "HEAD", bool parseNormalMessages = false)
         {
             string cmd = String.Format(@"log --grep=""{0}"" -E --format={1} {2}",
                 grep,
@@ -122,7 +122,7 @@ namespace Cake.ConventionalChangelog
 
             foreach (var line in lines)
             {
-                var commit = ParseRawCommit(line);
+                var commit = ParseRawCommit(line, parseNormalMessages);
                 if (commit != null)
                 {
                     commits.Add(commit);
@@ -132,7 +132,7 @@ namespace Cake.ConventionalChangelog
             return commits;
         }
 
-        public CommitMessage ParseRawCommit(string raw)
+        public CommitMessage ParseRawCommit(string raw, bool parseNormalMessages)
         {
             if (String.IsNullOrEmpty(raw)) return null;
 
@@ -178,7 +178,7 @@ namespace Cake.ConventionalChangelog
             var match = (new Regex(COMMIT_PATTERN)).Match(msg.Subject);
             if (!match.Success || match.Groups[1] == null || match.Groups[4] == null)
             {
-                return null;
+                return parseNormalMessages ? msg : null;
             }
 
             var subject = match.Groups[4].Value;

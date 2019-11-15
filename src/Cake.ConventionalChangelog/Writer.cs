@@ -167,7 +167,7 @@ namespace Cake.ConventionalChangelog
                 List<CommitMessage> messages = entry.Value;
 
                 string prefix = "*";
-                bool nested = section.Messages.Count > 1;
+                bool nested = messages.Count > 1;
 
                 if (componentName != Writer.EMPTY_COMPONENT)
                 {
@@ -225,6 +225,10 @@ namespace Cake.ConventionalChangelog
                     return Fixes;
                 case "feat":
                     return Feats;
+                case "break":
+                    return Breaks;
+                case "others":
+                    return Others;
                 default:
                     return null;
             }

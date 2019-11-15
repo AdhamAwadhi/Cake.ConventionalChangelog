@@ -49,7 +49,7 @@ namespace Cake.ConventionalChangelog
 
 
             var git = new Git(options.WorkingDirectory);
-            var commits = git.GetCommits(grep: options.Grep, from: from, to: options.To ?? "HEAD");
+            var commits = git.GetCommits(grep: options.Grep, from: from, to: options.To ?? "HEAD", parseNormalMessages: options.WriteNormalMessages);
 
             return WriteLog(commits, options);
         }
@@ -104,6 +104,7 @@ namespace Cake.ConventionalChangelog
         public string Grep { get; set; }
         public bool AlwaysPrepends { get; set; }
         public bool WriteOthers { get; set; }
+        public bool WriteNormalMessages { get; set; }
 
         public ChangelogOptions()
         {
@@ -114,6 +115,7 @@ namespace Cake.ConventionalChangelog
             Grep = @"^feat|^fix|BREAKING";
             AlwaysPrepends = false;
             WriteOthers = true;
+            WriteNormalMessages = false;
         }
     }
 }

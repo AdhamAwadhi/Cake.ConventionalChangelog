@@ -82,7 +82,9 @@ namespace Cake.ConventionalChangelog
                 Subtitle = settings.Subtitle,
                 WorkingDirectory = settings.WorkingDirectory.FullPath,
                 File = settings.File.FullPath,
-                AlwaysPrepends = settings.AlwaysPrepends
+                AlwaysPrepends = settings.AlwaysPrepends,
+                WriteOthers = settings.WriteOthers,
+                WriteNormalMessages = settings.WriteNormalMessages
             };
 
             var gen = new Changelog();
