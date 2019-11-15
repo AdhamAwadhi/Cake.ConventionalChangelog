@@ -67,6 +67,11 @@ namespace Cake.ConventionalChangelog
         public bool WriteNormalMessages { get; set; }
 
         /// <summary>
+        /// Limit the commits output to ones with log message that do not match the pattern specified with <see cref="Grep"/>.
+        /// </summary>
+        public bool InvertGrep { get; set; }
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="ChangeLogSettings"/> class.
         /// </summary>
         public ChangeLogSettings()
@@ -78,6 +83,7 @@ namespace Cake.ConventionalChangelog
             AlwaysPrepends = false;
             WriteOthers = true;
             Grep = @"^feat|^fix|BREAKING" + (WriteOthers ? "" : "");
+            InvertGrep = false;
         }
     }
 }

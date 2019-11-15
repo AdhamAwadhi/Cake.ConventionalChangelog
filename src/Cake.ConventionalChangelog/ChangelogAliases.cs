@@ -84,7 +84,8 @@ namespace Cake.ConventionalChangelog
                 File = settings.File.FullPath,
                 AlwaysPrepends = settings.AlwaysPrepends,
                 WriteOthers = settings.WriteOthers,
-                WriteNormalMessages = settings.WriteNormalMessages
+                WriteNormalMessages = settings.WriteNormalMessages,
+                InvertGrep = settings.InvertGrep
             };
 
             var gen = new Changelog();

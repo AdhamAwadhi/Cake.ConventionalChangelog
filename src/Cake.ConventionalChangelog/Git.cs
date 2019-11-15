@@ -106,12 +106,16 @@ namespace Cake.ConventionalChangelog
             }
         }
 
-        public List<CommitMessage> GetCommits(string grep = @"^feat|^fix|BREAKING", string format = @"%H%n%s%n%b%n==END==", string from = "", string to = "HEAD", bool parseNormalMessages = false)
+        public List<CommitMessage> GetCommits(string grep = @"^feat|^fix|BREAKING", string format = @"%H%n%s%n%b%n==END==",
+            string from = "", string to = "HEAD",
+            bool parseNormalMessages = false,
+            bool invertGrep = false)
         {
-            string cmd = String.Format(@"log --grep=""{0}"" -E --format={1} {2}",
+            string cmd = String.Format(@"log --grep=""{0}"" -E --format={1} {2} {3}",
                 grep,
                 format,
-                !String.IsNullOrEmpty(from) ? '"' + from + ".." + to + '"' : ""
+                !String.IsNullOrEmpty(from) ? '"' + from + ".." + to + '"' : "",
+                invertGrep ? "--invert-grep" : ""
             );
 
             var ret = GitCommand(cmd);
